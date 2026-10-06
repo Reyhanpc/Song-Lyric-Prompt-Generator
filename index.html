@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Song Lyric & Music Prompt Generator RPM Tinggi (Dynamic Variation)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e5edff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    },
+                    fontSize: {
+                        'xxs': '0.7rem',
+                        'tiny': '0.8rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        @media (min-width: 640px) {
+            html {
+                font-size: 17px;
+            }
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Custom scrollbar for textareas */
+        textarea::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 10px;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.9);
+            border-radius: 10px;
+            border: 2px solid rgba(15, 23, 42, 0.8);
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 85, 105, 1);
+        }
+
+        /* Smooth transitions */
+        select, input, button, textarea {
+            transition: all 0.15s ease-in-out;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            transform: translateY(-1px);
+        }
+
+        /* Better select dropdown arrow */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2.5rem;
+        }
+
+        select option {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 8px;
+        }
+
+        /* Custom toggle switch size */
+        .toggle-switch {
+            width: 3rem;
+            height: 1.6rem;
+        }
+
+        .toggle-switch::after {
+            width: 1.2rem;
+            height: 1.2rem;
+            top: 0.2rem;
+            left: 0.2rem;
+        }
+
+        .peer:checked ~ .toggle-switch::after {
+            transform: translateX(1.4rem);
+        }
+
+        /* Badge animations */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .pulse-dot {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Card hover effect */
+        .card-hover {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-hover:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.08);
+        }
+
+        /* Responsive textarea heights */
+        .textarea-main {
+            min-height: 24rem;
+            height: 24rem;
+        }
+
+        @media (min-width: 640px) {
+            .textarea-main {
+                min-height: 28rem;
+                height: 28rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .textarea-main {
+                min-height: 32rem;
+                height: 32rem;
+            }
+        }
+
+        .textarea-extend {
+            min-height: 14rem;
+            height: 14rem;
+        }
+
+        @media (min-width: 640px) {
+            .textarea-extend {
+                min-height: 16rem;
+                height: 16rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .textarea-extend {
+                min-height: 18rem;
+                height: 18rem;
+            }
+        }
+
+        /* Form spacing improvements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Button base improvements */
+        .btn-primary {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 0.875rem;
+            letter-spacing: 0.01em;
+        }
+
+        @media (min-width: 640px) {
+            .btn-primary {
+                padding: 1.1rem 2rem;
+                font-size: 1.05rem;
+            }
+        }
+
+        /* Copy buttons */
+        .btn-copy {
+            padding: 0.5rem 0.9rem;
+            font-size: 0.8rem;
+            border-radius: 0.625rem;
+        }
+
+        @media (min-width: 640px) {
+            .btn-copy {
+                padding: 0.6rem 1.1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Better label sizing */
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+            display: block;
+        }
+
+        @media (min-width: 640px) {
+            .form-label {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Input/Select base */
+        .form-input {
+            padding: 0.8rem 1rem;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            background-color: #0f172a;
+            border: 1.5px solid #334155;
+            color: #f1f5f9;
+            width: 100%;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        @media (min-width: 640px) {
+            .form-input {
+                padding: 0.9rem 1.1rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Small select for override */
+        .form-select-sm {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 0.625rem;
+        }
+
+        /* Badge improvements */
+        .trait-badge {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        @media (min-width: 640px) {
+            .trait-badge {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-16 antialiased">
+
+    <!-- Header Section -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 shadow-lg shadow-black/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="p-2.5 sm:p-3 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/25">
+                    <i class="fa-solid fa-wand-magic-sparkles text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <h1 class="font-bold text-base sm:text-xl text-white tracking-tight">Generator Prompt Lirik & Musik AI</h1>
+                        <span class="px-2 py-0.5 text-[10px] sm:text-xs uppercase tracking-wider font-extrabold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-md whitespace-nowrap">v2.0 Dynamic Engine</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Variasi Otomatis & Unik Setiap Klik untuk Konten RPM Tinggi</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-xs sm:text-sm font-semibold rounded-full flex items-center gap-2">
+                    <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 pulse-dot"></span> Mode Anti-Monoton Aktif
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 space-y-5 sm:space-y-6 bg-slate-800/60 border border-slate-700/70 p-5 sm:p-7 rounded-2xl shadow-2xl backdrop-blur-sm card-hover">
+            
+            <div class="border-b border-slate-700/60 pb-3 sm:pb-4 flex items-center justify-between">
+                <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2.5">
+                    <i class="fa-solid fa-sliders text-blue-400 text-base sm:text-lg"></i> Pengaturan Target & Musik
+                </h2>
+                <button type="button" id="resetDefaultsBtn" class="text-xs sm:text-sm text-slate-400 hover:text-white transition flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-slate-700/50">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+            </div>
+
+            <form id="promptForm" class="space-y-4 sm:space-y-5">
+                
+                <!-- Genre Music -->
+                <div class="form-group">
+                    <label class="form-label">Genre Utama Musik</label>
+                    <select id="genre" class="form-input">
+                        <option value="Lo-Fi Chill / Chillhop">Lo-Fi / Chillhop / Study Beats</option>
+                        <option value="Pop / Indie Pop">Pop / Indie Pop / Commercial</option>
+                        <option value="R&B / Soul">R&B / Neo-Soul / Urban</option>
+                        <option value="Hip-Hop / Boom Bap / Trap">Hip-Hop / Boom Bap / Trap</option>
+                        <option value="Synthwave / Retrowave">Synthwave / 80s Cyberpunk</option>
+                        <option value="Rock / Alternative Rock">Rock / Alternative / Indie Rock</option>
+                        <option value="Jazz / Soft Jazz">Jazz / Coffee Shop Jazz</option>
+                        <option value="Country / Acoustic Folk">Country / Acoustic Folk</option>
+                        <option value="EDM / House / Melodic Techno">EDM / House / Melodic</option>
+                        <option value="Acoustic / Singer-Songwriter">Acoustic Unplugged</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Variation Box (Engine Unique Seeds) -->
+                <div class="bg-blue-950/40 border border-blue-500/25 p-4 sm:p-5 rounded-xl space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-sm font-bold text-blue-300 flex items-center gap-2">
+                            <i class="fa-solid fa-shuffle text-blue-400"></i> Mode Variasi Unik Per-Klik
+                        </span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="autoRandomize" class="sr-only peer" checked>
+                            <div class="toggle-switch bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:bg-white after:border-slate-300 after:border after:rounded-full after:transition-all peer-checked:bg-blue-600 relative"></div>
+                        </label>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                        Saat diaktifkan, setiap kali Anda klik <b class="text-blue-300">Generate</b>, elemen sub-genre, BPM, tekstur instrumen, dan gaya vokal akan terus berganti secara otomatis.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tempo / Speed</label>
+                            <select id="tempoOverride" class="form-input form-select-sm">
+                                <option value="auto">🎲 Acak Otomatis</option>
+                                <option value="slow">Slow Ballad (60-80 BPM)</option>
+                                <option value="mid">Mid-Tempo (85-110 BPM)</option>
+                                <option value="upbeat">Upbeat / Enerjik (120-135 BPM)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Karakter Vokal</label>
+                            <select id="vocalOverride" class="form-input form-select-sm">
+                                <option value="auto">🎲 Acak Otomatis</option>
+                                <option value="female_soft">Wanita (Soft & Airy)</option>
+                                <option value="female_power">Wanita (Powerful Belt)</option>
+                                <option value="male_deep">Pria (Deep & Raspy)</option>
+                                <option value="male_smooth">Pria (Smooth Crooner)</option>
+                                <option value="duet">Duet / Warm Harmonies</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Target Negara RPM Tinggi -->
+                <div class="form-group">
+                    <label class="form-label">Target Negara (RPM Tinggi)</label>
+                    <select id="country" class="form-input">
+                        <option value="Amerika Serikat (United States - Bahasa Inggris)">🇺🇸 Amerika Serikat (US) - RPM Sangat Tinggi</option>
+                        <option value="Jerman (Germany - Bahasa Jerman/Inggris)">🇩🇪 Jerman (DE) - RPM Tinggi</option>
+                        <option value="Inggris Raya (United Kingdom - Bahasa Inggris)">🇬🇧 Inggris Raya (UK) - RPM Tinggi</option>
+                        <option value="Kanada (Canada - Bahasa Inggris)">🇨🇦 Kanada (CA) - RPM Tinggi</option>
+                        <option value="Australia (Australia - Bahasa Inggris)">🇦🇺 Australia (AU) - RPM Tinggi</option>
+                        <option value="Prancis (France - Bahasa Prancis/Inggris)">🇫🇷 Prancis (FR) - RPM Tinggi</option>
+                        <option value="Jepang (Japan - Bahasa Jepang/Inggris)">🇯🇵 Jepang (JP) - RPM Tinggi</option>
+                        <option value="Korea Selatan (South Korea - Bahasa Korea/Inggris)">🇰🇷 Korea Selatan (KR) - RPM Tinggi</option>
+                    </select>
+                </div>
+
+                <!-- Grid Target Demografi (Usia & Gender) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Target Usia -->
+                    <div>
+                        <label class="form-label">Target Usia</label>
+                        <select id="ageGroup" class="form-input">
+                            <option value="13-17 tahun">13-17 tahun (Remaja)</option>
+                            <option value="18-24 tahun" selected>18-24 tahun (Dewasa Muda)</option>
+                            <option value="25-34 tahun">25-34 tahun (Milenial)</option>
+                            <option value="35-44 tahun">35-44 tahun (Dewasa)</option>
+                            <option value="45-54 tahun">45-54 tahun (Paruh Baya)</option>
+                            <option value="55-64 tahun">55-64 tahun (Senior)</option>
+                            <option value="65+ tahun">65+ tahun (Lansia)</option>
+                        </select>
+                    </div>
+
+                    <!-- Target Gender -->
+                    <div>
+                        <label class="form-label">Target Gender</label>
+                        <select id="gender" class="form-input">
+                            <option value="Wanita">Wanita</option>
+                            <option value="Pria">Pria</option>
+                            <option value="Semua Gender (Unisex)" selected>Semua Gender (Unisex)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Suasana / Mood -->
+                <div class="form-group">
+                    <label class="form-label">Mood / Emosi Utama</label>
+                    <select id="mood" class="form-input">
+                        <option value="Melankolis / Galau / Sedih">Melankolis / Galau / Patah Hati</option>
+                        <option value="Santai / Chill / Cozy">Santai / Chill / Restful</option>
+                        <option value="Enerjik / Semangat / Hype">Enerjik / Semangat / Motivasi</option>
+                        <option value="Romantis / Manis">Romantis / Jatuh Cinta</option>
+                        <option value="Gelap / Dark / Deep">Gelap / Emosional / Deep</option>
+                        <option value="Nostalgia / Vintage">Nostalgia / Kenangan Masa Lalu</option>
+                    </select>
+                </div>
+
+                <!-- Tema / Cerita Utama -->
+                <div class="form-group">
+                    <label class="form-label">Tema / Ide Cerita Spesifik (Opsional)</label>
+                    <input type="text" id="topic" placeholder="Contoh: Kopi pagi di kota hujan, rindu masa SMA, dsb." class="form-input placeholder:text-slate-500" />
+                </div>
+
+                <!-- Checkbox Instrumental -->
+                <div class="flex items-center gap-3 pt-1 pb-1">
+                    <input type="checkbox" id="instrumentalOnly" class="w-5 h-5 text-blue-600 bg-slate-900 border-slate-600 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer accent-blue-600">
+                    <label for="instrumentalOnly" class="text-sm sm:text-base font-medium text-slate-300 cursor-pointer select-none">
+                        Hanya Instrumen (Tanpa Vokal/Lirik)
+                    </label>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-2 space-y-3">
+                    <button type="button" id="generateBtn" class="btn-primary w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:from-blue-700 active:to-indigo-700 text-white font-bold rounded-xl shadow-xl shadow-blue-500/30 transition duration-200 flex items-center justify-center gap-2.5 cursor-pointer">
+                        <i class="fa-solid fa-bolt text-lg"></i> Generate Prompt Lirik AI (Variasi Baru)
+                    </button>
+                    
+                    <button type="button" id="quickShuffleBtn" class="w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-slate-200 font-semibold rounded-xl transition duration-150 flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer">
+                        <i class="fa-solid fa-dice text-amber-400 text-base"></i> Acak Ulang Variasi Musik Tanpa Ubah Form
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Output Section -->
+        <div class="lg:col-span-7 space-y-5 sm:space-y-6 flex flex-col">
+            
+            <!-- Live Traits Badge Container -->
+            <div id="traitsContainer" class="bg-slate-800/80 border border-slate-700 p-4 sm:p-5 rounded-2xl shadow-lg flex flex-wrap items-center gap-2.5 text-xs sm:text-sm">
+                <span class="text-slate-400 font-semibold mr-1 flex items-center gap-2">
+                    <i class="fa-solid fa-dna text-purple-400 text-base"></i> Elemen Variasi Aktif:
+                </span>
+                <span id="badgeSubgenre" class="trait-badge bg-slate-700 text-purple-300 border border-purple-500/30">Sub-genre: -</span>
+                <span id="badgeBpm" class="trait-badge bg-slate-700 text-amber-300 border border-amber-500/30">Tempo: -</span>
+                <span id="badgeVocal" class="trait-badge bg-slate-700 text-emerald-300 border border-emerald-500/30">Vokal: -</span>
+                <span id="badgeTexture" class="trait-badge bg-slate-700 text-blue-300 border border-blue-500/30">Tekstur: -</span>
+            </div>
+
+            <!-- Suno / Udio Quick Copy Box -->
+            <div class="bg-gradient-to-r from-slate-800/95 to-slate-900/95 border border-indigo-500/35 p-4 sm:p-5 rounded-2xl shadow-xl space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs sm:text-sm font-bold text-indigo-300 flex items-center gap-2">
+                        <i class="fa-solid fa-music text-indigo-400 text-base"></i> Suno.ai / Udio.com Tag Prompt (Siap Copy)
+                    </span>
+                    <button id="copySunoTagBtn" class="btn-copy bg-indigo-600/40 hover:bg-indigo-600/70 active:bg-indigo-600/90 text-indigo-200 font-semibold transition border border-indigo-400/40 flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-regular fa-copy"></i> Salin Tag Style
+                    </button>
+                </div>
+                <input type="text" id="sunoTagOutput" readonly placeholder="Prompt singkat untuk Suno/Udio akan muncul di sini..." class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-3 sm:p-3.5 text-xs sm:text-sm text-amber-300 font-mono focus:outline-none focus:border-indigo-500/60 placeholder:text-slate-600" />
+            </div>
+
+            <!-- System Prompt Output -->
+            <div class="bg-slate-800/60 border border-slate-700/70 p-5 sm:p-7 rounded-2xl shadow-2xl flex-1 flex flex-col card-hover">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700/60 pb-3.5 mb-4 sm:mb-5">
+                    <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-code text-emerald-400 text-base sm:text-lg"></i> Prompt Penulisan Lirik / Komposisi (ChatGPT / Gemini / Claude)
+                    </h2>
+                    <button id="copyBtn" class="btn-copy bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-slate-200 font-semibold transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-regular fa-copy"></i> Salin Prompt Utama
+                    </button>
+                </div>
+
+                <!-- Textarea Result -->
+                <div class="relative flex-1">
+                    <textarea id="outputPrompt" readonly placeholder="Klik tombol Generate untuk membuat prompt unik..." class="textarea-main w-full bg-slate-950/90 border border-slate-700/80 rounded-xl p-4 sm:p-5 text-slate-200 text-xs sm:text-sm font-mono leading-relaxed focus:outline-none focus:border-blue-500/60 resize-none placeholder:text-slate-600"></textarea>
+                </div>
+            </div>
+
+            <!-- Extend Output Section -->
+            <div class="bg-slate-800/60 border border-slate-700/70 p-5 sm:p-7 rounded-2xl shadow-2xl flex-1 flex flex-col card-hover">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700/60 pb-3.5 mb-4 sm:mb-5">
+                    <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-forward-step text-purple-400 text-base sm:text-lg"></i> Prompt Extend Lagu (Lanjutan Part 2)
+                    </h2>
+                    <button id="copyExtendBtn" class="btn-copy bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-slate-200 font-semibold transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-regular fa-copy"></i> Salin Extend
+                    </button>
+                </div>
+
+                <!-- Textarea Result Extend -->
+                <div class="relative flex-1">
+                    <textarea id="outputExtendPrompt" readonly placeholder="Prompt lanjutan lagu akan otomatis dibuat di sini..." class="textarea-extend w-full bg-slate-950/90 border border-slate-700/80 rounded-xl p-4 sm:p-5 text-slate-200 text-xs sm:text-sm font-mono leading-relaxed focus:outline-none focus:border-purple-500/60 resize-none placeholder:text-slate-600"></textarea>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white text-sm sm:text-base font-semibold px-5 py-3.5 rounded-xl shadow-2xl shadow-emerald-500/30 flex items-center gap-2.5 transform translate-y-24 opacity-0 transition-all duration-300 z-50 pointer-events-none">
+        <i class="fa-solid fa-check-circle text-lg"></i>
+        <span id="toastMessage">Teks berhasil disalin ke clipboard!</span>
+    </div>
+
+    <!-- Script Application Logic (TIDAK DIUBAH) -->
+    <script>
+        // Data Dictionary for Dynamic Variations to prevent repetitive output
+        const GENRE_DATABASE = {
+            'Lo-Fi Chill / Chillhop': {
+                subgenres: ['Chillhop Lounge', 'Jazzy Lo-Fi', 'Bedroom Lo-Fi', 'Ambient Tape Lo-Fi', 'Japanese City Lo-Fi', 'Rainy Night Study Beats'],
+                tempos: ['72 BPM (Slow Relaxing)', '82 BPM (Mellow Chill)', '88 BPM (Groovy Lounge)', '92 BPM (Upbeat Chillhop)'],
+                vocals: ['Airy Soft Female Vocals', 'Whispered Muted Vocals', 'Muffled Vintage Male Vocals', 'Melodic Vocal Chops', 'Dual Soft Harmonies'],
+                textures: ['Warm Vinyl Crackle & Rain FX', 'Analog Tape Saturation & Electric Rhodes', 'Cassette Hiss & Muted Nylon Guitar', 'Soft Jazz Piano & Brush Drums'],
+                narratives: ['Mengenang momen manis di malam berhujan', 'Duduk sendirian di kedai kopi kota asing', 'Menatap bintang dari atap apartemen jam 2 pagi', 'Mencari ketenangan di tengah hiruk pikuk kota']
+            },
+            'Pop / Indie Pop': {
+                subgenres: ['Synth-Pop 80s', 'Bedroom Indie Pop', 'Electro Disco Pop', 'Acoustic Guitar Pop', 'Melodic Dance Pop', 'Dark Atmospheric Pop'],
+                tempos: ['95 BPM (Mid-tempo Groove)', '112 BPM (Upbeat Pop)', '120 BPM (Danceable Rhythm)', '128 BPM (Energetic Synthpop)'],
+                vocals: ['Crystal Clear Female Belt', 'Warm Crisp Male Vocals', 'Layered Hook Harmonies', 'Emotional Raspy Male Lead', 'Silky Breathy Female Vocals'],
+                textures: ['Punchy Modern Drums & Bright Plucks', 'Shimmering Guitars & Saturated Bass', 'Vintage Juno Synthesizers & Gated Snare', 'Acoustic Strumming & Clean Bassline'],
+                narratives: ['Keberanian mengungkapkan perasaan terpendam', 'Kilas balik kenangan manis musim panas lalu', 'Dilema cinta bertepuk sebelah tangan', 'Semangat untuk memulai lembaran baru']
+            },
+            'R&B / Soul': {
+                subgenres: ['Neo-Soul', 'Contemporary R&B', '90s Slow Jam R&B', 'Trapsoul', 'Alternative Soul'],
+                tempos: ['68 BPM (Slow Emotional Jam)', '78 BPM (Smooth Groove)', '85 BPM (Sensual Mid-tempo)', '94 BPM (Bounce R&B)'],
+                vocals: ['Soulful Vocal Runs & Melismas', 'Smooth Warm Crooner Vocals', 'Deep Raspy Soulful Male', 'Multi-layered Gospel-style Harmonies', 'Sensual Soft Female Lead'],
+                textures: ['Silky Rhodes Piano & Deep Sub Bass', 'Groovy Basslines & Muted Electric Guitar', 'Atmospheric Ambient Pads & Crisp Snares', 'Vintage Hammond Organ & Finger-snaps'],
+                narratives: ['Percakapan mendalam di tengah malam', 'Perjuangan mempertahankan ikatan emosional', 'Penyesalan atas kata-kata yang terlanjur diucapkan', 'Kehangatan rasa cinta yang tak bersyarat']
+            },
+            'Hip-Hop / Boom Bap / Trap': {
+                subgenres: ['Classic 90s Boom Bap', 'Melodic Trap', 'Lyrical Jazz Rap', 'Conscious Hip-Hop', 'Dark Hard Trap'],
+                tempos: ['85 BPM (Classic Boom Bap Swing)', '92 BPM (Jazz Rap Bounce)', '130 BPM (Fast Trap Flow)', '140 BPM (High Energy Trap)'],
+                vocals: ['Fast Cadence Lyrical Rap', 'Melodic Autotuned Rap Flow', 'Deep Aggressive Tone', 'Smooth Laid-back Delivery', 'Dual Vocal Stacks & Hype Adlibs'],
+                textures: ['Heavy Kick Drums & Dusty Vinyl Samples', 'Rolling 808 Bass & Crisp Hi-Hat Rolls', 'Smooth Jazz Horns & Upright Bass Sample', 'Dark Ambient Synths & Slicing Snares'],
+                narratives: ['Kisah perjuangan bangkit dari titik terendah', 'Realita kehidupan jalanan dan impian besar', 'Refleksi diri atas pencapaian dan kegagalan', 'Sindiran halus pada kepalsuan di dunia modern']
+            },
+            'Synthwave / Retrowave': {
+                subgenres: ['Outrun 80s Cyberpunk', 'Dreamwave', 'Darksynth', 'Chillwave', 'Synthpop Retro'],
+                tempos: ['105 BPM (Cruising Retro)', '118 BPM (Driving Synth Pulse)', '124 BPM (High-speed Outrun)', '95 BPM (Dreamy Chillwave)'],
+                vocals: ['Ethereal Reverb-drenched Vocals', 'Robotic Vocoder Harmonies', 'Powerful 80s Rock Style Vocals', 'Whispery Nostalgic Female Lead'],
+                textures: ['Arpeggiated Analog Synths & Gated Drums', 'Neon Warm Basslines & Analog Saw Leads', 'Pulsing Basslines & Retro Drum Machines', 'Glitchy Synth Arps & Atmospheric Pads'],
+                narratives: ['Perjalanan malam menyusuri kota bertabur lampu neon', 'Kerinduan akan masa depan bergaya retro', 'Mengejar bayangan kekasih di dunia hampa', 'Pelarian dramatis melintasi batas waktu']
+            },
+            'Rock / Alternative Rock': {
+                subgenres: ['Indie Rock Garage', 'Pop Punk Alternative', 'Hard Rock Anthem', 'Shoegaze Atmospheric', 'Acoustic Soft Rock'],
+                tempos: ['110 BPM (Steady Rock Groove)', '128 BPM (Driving Punk Tempo)', '138 BPM (High Octane Anthem)', '90 BPM (Atmospheric Slow Rock)'],
+                vocals: ['Gritty Raspy Rock Vocals', 'High Energy Passionate Belt', 'Laid-back Indie Vocal Tone', 'Dual Raw Harmonies', 'Aggressive Screaming Backings'],
+                textures: ['Distorted Overdriven Guitars & Punchy Drums', 'Chimey Indie Guitars & Driving Bassline', 'Fuzz Guitar Walls & Reverb Drums', 'Tight Acoustic Strum & Driving Snare'],
+                narratives: ['Pemberontakan terhadap rutinitas yang membosankan', 'Pencarian jati diri di tengah keraguan', 'Rasa kebebasan saat berkendara tanpa tujuan', 'Dinamika hubungan yang penuh gejolak']
+            },
+            'Jazz / Soft Jazz': {
+                subgenres: ['Coffee Shop Bossa Nova', 'Smooth Contemporary Jazz', 'Late Night Bebop', 'Modal Vocal Jazz', 'Acoustic Trio Jazz'],
+                tempos: ['65 BPM (Late Night Slow Jazz)', '80 BPM (Smooth Bossa Swing)', '96 BPM (Medium Jazz Swing)', '110 BPM (Upbeat Bossa)'],
+                vocals: ['Silky Smooth Jazz Vocalist', 'Deep Smoky Baritone', 'Light Breathy Female Vocal', 'Scat Vocal Solos', 'Intimate Close-mic Singer'],
+                textures: ['Grand Piano Solos & Soft Brush Drums', 'Nylon Guitar Bossa Rhythms & Double Bass', 'Muted Trumpet Fill & Soft Saxophone', 'Warm Electric Rhodes & Finger Bass'],
+                narratives: ['Ketenangan dalam kesendirian di sudut kafe', 'Romansa singkat di bawah naungan hujan', 'Nostalgia lagu lama yang tak sengaja terdengar', 'Keindahan momen sederhana tanpa kata-kata']
+            },
+            'Country / Acoustic Folk': {
+                subgenres: ['Modern Country Pop', 'Traditional Acoustic Folk', 'Bluegrass Folk', 'Americana Roots', 'Campfire Indie Folk'],
+                tempos: ['76 BPM (Heartfelt Country Ballad)', '92 BPM (Mid-tempo Folk Strum)', '108 BPM (Upbeat Country Bounce)', '118 BPM (Driving Folk Rhythm)'],
+                vocals: ['Warm Country Twang Male', 'Clear Emotional Female Country Lead', 'Acoustic Dual Harmonies', 'Heartfelt Storyteller Voice'],
+                textures: ['Acoustic Guitar Fingerpicking & Pedal Steel', 'Fiddle Fills & Banjo Rhythms', 'Warm Bass Guitar & Stomping Percussion', 'Resonator Guitar & Clean Drums'],
+                narratives: ['Kerinduan akan kampung halaman dan kehangatan keluarga', 'Perjalanan jarak jauh menyusuri jalan pedesaan', 'Cinta sejati yang bertahan melintasi waktu', 'Pelajaran hidup dari kisah sederhana di masa lalu']
+            },
+            'EDM / House / Melodic Techno': {
+                subgenres: ['Melodic Progressive House', 'Future Bass Pop', 'Deep House Chill', 'Tropical Summer House', 'Melodic Techno'],
+                tempos: ['122 BPM (Deep House Groove)', '126 BPM (Tropical Chill House)', '128 BPM (Festival Progressive Peak)', '130 BPM (Driving Techno Pulse)'],
+                vocals: ['Chop vocal hooks & Emotional Female Lead', 'Echoing Atmospheric Vocals', 'Energetic Anthem Stacks', 'Pitch-shifted Melodic Vocal'],
+                textures: ['Pulsing Synth Bass & Driving Kick Drum', 'Bright Pluck Leads & Euphoric Drops', 'Subtle Acid Bass & Atmospheric Pads', 'Shimmering Synth Stabs & Fast Percussion'],
+                narratives: ['Energi tak terbatas di lantai dansa saat malam', 'Kebebasan melepas beban dan menari bersama', 'Koneksi emosional instan dengan orang asing', 'Mengejar cahaya fajar bersama teman sejati']
+            },
+            'Acoustic / Singer-Songwriter': {
+                subgenres: ['Intimate Bedroom Acoustic', 'Folk Singer-Songwriter', 'Piano Singer Ballad', 'Acoustic Duo Harmonies', 'Raw Unplugged Session'],
+                tempos: ['68 BPM (Slow Emotional Fingerpick)', '78 BPM (Gentle Strumming)', '88 BPM (Warm Acoustic Bounce)', '96 BPM (Lively Acoustic)'],
+                vocals: ['Intimate Raw Vocal with Subtle Breaths', 'Soulful Soft Singer', 'Emotional Pure Female Tone', 'Warm Raspy Acoustic Male'],
+                textures: ['Solo Steel-string Acoustic & Subtle Cello', 'Grand Piano & Subtle Ambient Strings', 'Dual Acoustic Guitars & Soft Shaker', 'Unplugged Nylon Guitar & Warm Sub-bass'],
+                narratives: ['Surat terbuka untuk seseorang di masa lalu', 'Pengakuan sejujurnya dari lubuk hati terdalam', 'Proses menyembuhkan luka batin secara perlahan', 'Rasa syukur atas kebaikan-kebaikan kecil sehari-hari']
+            }
+        };
+
+        // DOM Elements
+        const genreEl = document.getElementById('genre');
+        const countryEl = document.getElementById('country');
+        const ageGroupEl = document.getElementById('ageGroup');
+        const genderEl = document.getElementById('gender');
+        const moodEl = document.getElementById('mood');
+        const topicEl = document.getElementById('topic');
+        const autoRandomizeEl = document.getElementById('autoRandomize');
+        const tempoOverrideEl = document.getElementById('tempoOverride');
+        const vocalOverrideEl = document.getElementById('vocalOverride');
+        const instrumentalOnlyEl = document.getElementById('instrumentalOnly');
+
+        const outputPromptEl = document.getElementById('outputPrompt');
+        const outputExtendPromptEl = document.getElementById('outputExtendPrompt');
+        const sunoTagOutputEl = document.getElementById('sunoTagOutput');
+
+        const badgeSubgenre = document.getElementById('badgeSubgenre');
+        const badgeBpm = document.getElementById('badgeBpm');
+        const badgeVocal = document.getElementById('badgeVocal');
+        const badgeTexture = document.getElementById('badgeTexture');
+
+        const generateBtn = document.getElementById('generateBtn');
+        const quickShuffleBtn = document.getElementById('quickShuffleBtn');
+        const resetDefaultsBtn = document.getElementById('resetDefaultsBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyExtendBtn = document.getElementById('copyExtendBtn');
+        const copySunoTagBtn = document.getElementById('copySunoTagBtn');
+        const toastEl = document.getElementById('toast');
+        const toastMessageEl = document.getElementById('toastMessage');
+
+        // Helper function to pick random item from array
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Main function to generate randomized & unique prompts
+        function generatePrompt() {
+            const selectedGenreKey = genreEl.value;
+            const genreData = GENRE_DATABASE[selectedGenreKey] || GENRE_DATABASE['Lo-Fi Chill / Chillhop'];
+            
+            const country = countryEl.value;
+            const ageGroup = ageGroupEl.value;
+            const gender = genderEl.value;
+            const mood = moodEl.value;
+            const userTopic = topicEl.value.trim();
+            const isInstrumental = instrumentalOnlyEl ? instrumentalOnlyEl.checked : false;
+
+            // Determine randomized traits for unique variations
+            let subgenre = getRandomItem(genreData.subgenres);
+            let tempo = getRandomItem(genreData.tempos);
+            let vocalStyle = getRandomItem(genreData.vocals);
+            let texture = getRandomItem(genreData.textures);
+            let suggestedTopic = userTopic || getRandomItem(genreData.narratives);
+
+            // Apply overrides if chosen
+            if (tempoOverrideEl.value === 'slow') tempo = '65-75 BPM (Slow / Deep Mood)';
+            else if (tempoOverrideEl.value === 'mid') tempo = '85-100 BPM (Mid-Tempo Groove)';
+            else if (tempoOverrideEl.value === 'upbeat') tempo = '120-130 BPM (Upbeat & Energetic)';
+
+            if (vocalOverrideEl.value === 'female_soft') vocalStyle = 'Airy & Soft Female Vocals';
+            else if (vocalOverrideEl.value === 'female_power') vocalStyle = 'Powerful & Emotional Female Belt';
+            else if (vocalOverrideEl.value === 'male_deep') vocalStyle = 'Deep & Raspy Male Lead';
+            else if (vocalOverrideEl.value === 'male_smooth') vocalStyle = 'Smooth Baritone Crooner Vocals';
+            else if (vocalOverrideEl.value === 'duet') vocalStyle = 'Harmonious Male & Female Duet';
+
+            // Update Trait Badges on UI
+            badgeSubgenre.textContent = `Sub: ${subgenre}`;
+            badgeBpm.textContent = `Tempo: ${tempo.split(' ')[0]}`;
+            badgeVocal.textContent = isInstrumental ? 'Vokal: None (Instrumental)' : `Vokal: ${vocalStyle.split(' ')[0]} ${vocalStyle.split(' ')[1] || ''}`;
+            badgeTexture.textContent = `Texture: ${texture.split('&')[0]}`;
+
+            // Build Suno/Udio Short Tag
+            let sunoTag = '';
+            if (isInstrumental) {
+                sunoTag = `[Instrumental], ${subgenre}, ${mood}, ${tempo.split(' ')[0]} BPM, ${texture}, high quality, dynamic mix`;
+            } else {
+                sunoTag = `${subgenre}, ${mood}, ${vocalStyle}, ${tempo.split(' ')[0]} BPM, ${texture}, catchy chorus, master quality`;
+            }
+            sunoTagOutputEl.value = sunoTag;
+
+            // Generate System Prompt
+            let promptText = '';
+            let extendPromptText = '';
+
+            if (isInstrumental) {
+                promptText = `Bertindaklah sebagai Music Producer & Audio Composer profesional berpengalaman yang ahli dalam merancang komposisi musik instrumental viral bernilai monetisasi RPM tinggi.
+
+Tugas Anda adalah menyusun konsep dan struktur aransemen musik instrumental lengkap (tanpa vokal) yang segar dan unik dengan kualifikasi berikut:
+
+[TARGET AUDIENS & IDENTITAS LAGU - HIGH RPM TARGET]
+• Genre Utama: ${selectedGenreKey}
+• Variasi Sub-Genre Unik: ${subgenre}
+• Tempo & Rhythm: ${tempo}
+• Karakter Sound & Tekstur Produksi: ${texture}
+• Target Negara/Pasar: ${country}
+• Demografi Audiens: Usia ${ageGroup} | Gender: ${gender}
+• Mood Utama: ${mood}
+• Konsep / Vibe Cerita: "${suggestedTopic}"
+
+[INSTRUKSI STRUKTUR KOMPOSISI INSTRUMENTAL]
+1. Rancang melodi utama (lead synth/guitar/piano) yang sangat earworm, memorabel, dan berkarakter unik agar langsung memikat dalam 5 detik pertama.
+2. Jelaskan dinamika perpindahan energi antar bagian agar musik tidak monoton saat didengarkan berulang kali (looping friendly).
+3. Buat rincian bagian musik sebagai berikut:
+   - [Intro] (Membangun atmosfer awal dengan tekstur sound: ${texture})
+   - [A Section / Verse Vibe] (Pengenalan melodi utama dengan tempo ${tempo.split(' ')[0]})
+   - [B Section / Chorus Vibe] (Puncak energi, hook instrumen paling catchy)
+   - [A Section / Re-Verse] (Variasi instrumen tambahan)
+   - [B Section / Chorus Vibe] (Klimaks harmoni instrumental)
+   - [Bridge / Break-Down] (Perubahan mood/progresi akord sementara)
+   - [Outro] (Penutup lembut / Fading out)
+
+[STYLE TAG UNTUK SUNO/UDIO]
+Gunakan tag berikut untuk generator musik AI:
+"${sunoTag}"
+
+Tolong buatkan deskripsi komposisi aransemen instrumen ini sekarang:`;
+
+                extendPromptText = `Tolong buatkan panduan lanjutan (Part 2 / Extend) untuk komposisi instrumental "${subgenre}" sebelumnya.
+
+[INSTRUKSI EXTEND INSTRUMENTAL]
+1. Pertahankan tempo ${tempo} dan nuansa ${mood} agar tetap selaras dengan target pasar ${country}.
+2. Buat variasi dinamika baru (misalnya penambahan lapisan instrumen solo baru atau perubahan nada kunci / modulation).
+3. Struktur Part 2:
+   - [Instrumental Bridge / Breakout] (Perubahan ritme atau nada)
+   - [Solo Section] (Fokus pada melodi instrumen utama)
+   - [Final Grand Chorus] (Puncak energi instrumental penuh)
+   - [Outro / Fade Out] (Penutup yang membekas)
+
+Berikan deskripsi aransemen lanjutannya sekarang:`;
+
+            } else {
+                promptText = `Bertindaklah sebagai Hit Songwriter & Producer musik profesional bertaraf internasional yang ahli merancang lirik lagu catchy untuk target pasar global monetisasi RPM tinggi.
+
+Tugas Anda adalah menulis lirik lagu lengkap yang unik, relatable, dan emosional berdasarkan parameter spesifik berikut:
+
+[TARGET DEMOGRAFI & AURA MUSIK - POTENSI RPM TINGGI]
+• Genre Utama: ${selectedGenreKey}
+• Nuansa Sub-Genre: ${subgenre}
+• Tempo & Beat Vibe: ${tempo}
+• Karakter Vokal Yang Diinginkan: ${vocalStyle}
+• Tekstur Produksi: ${texture}
+• Target Negara/Wilayah: ${country} (Sesuaikan gaya bahasa dan tren kultural lokal)
+• Target Usia: ${ageGroup} | Gender: ${gender}
+• Mood Emosional: ${mood}
+• Tema Cerita Utama: "${suggestedTopic}"
+
+[PANDUAN PENULISAN LIRIK & HOOK VIRAL]
+1. Gunakan Bahasa yang dominan dan alami bagi audiens ${country}, dengan kiasan, diksi, dan rima yang pas untuk kelompok usia ${ageGroup}.
+2. Buat Reff / Chorus yang sangat catchy, berulang, dan emosional (sangat cocok untuk format potongan klip pendek TikTok/Reels/Shorts).
+3. Berikan penanda struktur vokal yang jelas seperti [Verse], [Chorus], dll.
+4. Struktur Lagu Lengkap:
+   - [Verse 1] (Pengenalan situasi dan emosi awal)
+   - [Pre-Chorus] (Membangun ketegangan emosional)
+   - [Chorus] (Hook utama paling catchy & berkesan)
+   - [Verse 2] (Pendalaman cerita dengan dinamika vokal: ${vocalStyle})
+   - [Chorus] (Pengulangan hook utama)
+   - [Bridge] (Puncak konflik emosional / modulasi nada)
+   - [Chorus] (Klimaks lirik)
+   - [Outro] (Penutup perlahan yang membekas)
+
+[SUNO / UDIO MUSIC STYLE PROMPT]
+Sertakan juga tag style di bagian bawah:
+"${sunoTag}"
+
+Tolong hasilkan lirik lagu lengkap beserta struktur penandanya sekarang:`;
+
+                extendPromptText = `Tolong buatkan lanjutan lirik (Part 2 / Extend) untuk lagu "${subgenre}" sebelumnya.
+
+[INSTRUKSI EXTEND LIRIK]
+1. Lanjutkan jalan cerita tentang "${suggestedTopic}" dengan nuansa emosional ${mood}.
+2. Pertahankan gaya bahasa ${country} dan karakter vokal ${vocalStyle}.
+3. Struktur Lanjutan (Part 2):
+   - [Verse 3] (Memberikan sudut pandang baru atau resolusi cerita)
+   - [Pre-Chorus] (Membangun kembali tensi)
+   - [Chorus] (Hook utama dengan variasi lirik puncak)
+   - [Bridge / Climax] (Puncak emosi paling dramatis)
+   - [Final Chorus] (Klimaks lagu)
+   - [Outro] (Ending perlahan)
+
+Tolong hasilkan lirik lanjutannya sekarang:`;
+            }
+
+            outputPromptEl.value = promptText;
+            outputExtendPromptEl.value = extendPromptText;
+        }
+
+        // Toast notification helper
+        function showToast(message) {
+            toastMessageEl.textContent = message;
+            toastEl.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toastEl.classList.add('translate-y-24', 'opacity-0');
+            }, 2500);
+        }
+
+        // Button Click Listeners
+        if (generateBtn) {
+            generateBtn.addEventListener('click', () => {
+                generatePrompt();
+                showToast('Prompt baru dengan variasi unik berhasil dibuat!');
+            });
+        }
+
+        if (quickShuffleBtn) {
+            quickShuffleBtn.addEventListener('click', () => {
+                generatePrompt();
+                showToast('Variasi musik diacak ulang!');
+            });
+        }
+
+        if (resetDefaultsBtn) {
+            resetDefaultsBtn.addEventListener('click', () => {
+                topicEl.value = '';
+                tempoOverrideEl.value = 'auto';
+                vocalOverrideEl.value = 'auto';
+                instrumentalOnlyEl.checked = false;
+                autoRandomizeEl.checked = true;
+                generatePrompt();
+                showToast('Pengaturan telah di-reset ke standar.');
+            });
+        }
+
+        // Copy Clipboard Helpers (Compatible with iframe contexts)
+        function copyToClipboard(element, message) {
+            if (!element || !element.value) return;
+            element.select();
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            showToast(message);
+        }
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                copyToClipboard(outputPromptEl, 'Prompt Utama disalin ke clipboard!');
+            });
+        }
+
+        if (copyExtendBtn) {
+            copyExtendBtn.addEventListener('click', () => {
+                copyToClipboard(outputExtendPromptEl, 'Prompt Extend disalin ke clipboard!');
+            });
+        }
+
+        if (copySunoTagBtn) {
+            copySunoTagBtn.addEventListener('click', () => {
+                copyToClipboard(sunoTagOutputEl, 'Style Tag Suno/Udio disalin!');
+            });
+        }
+
+        // Initial Generation on Page Load
+        window.addEventListener('load', () => {
+            generatePrompt();
+        });
+    </script>
+</body>
+</html>
